@@ -78,7 +78,7 @@ For predictor, we use summer temperature taken from the ERA5 reanalysis which is
 
 ```{r}
 ## Read data that have been downloaded to local computer from the URL sated above.
-file.remove('ERA5.fram-clean.pasvik.rda')
+#file.remove('ERA5.fram-clean.pasvik.rda')
 if (!file.exists('ERA5.fram-clean.pasvik.rda')) { 
   ## 2m surface air temperature
   era5.t2m <- retrieve('~/data/ERA5/ERA5_t2m_mon.nc',lon=c(20,32),lat=c(65,72))
@@ -289,5 +289,26 @@ The results from the downscaling exercise using length of 1-year-old fish caught
 The analysis carried out here involved linear methods and did not evaluate any non-linear relationships between temperature/precipitation and the fish data. 
 
 A negative result is a valid scientific outcome, and here we used the ERA5 reanalysis to explore potential links between available (elected) fish statistics and seasonal temperature/precipitation. 
+
+## Water temperature
+
+```{r}
+load('~/Downloads/Vanntemperatur_Skogfoss.rda')
+plot(w_tem$Year,w_tem$Vanntemperatur)
+## Convert the data into an esd-station-object:
+Tw <- zoo(w_tem$Vanntemperatur,order.by=w_tem$Year)
+Tw <- as.station(Tw,location='Skogfors',lon=lon(precip),lat=lat(precip),alt=alt(precip),
+                 param='temperature',unit='deg C',src='Asgeir Westby; UiT')
+plot(Tw)
+```
+
+Compare the annual mean temperature gainst the ERA5 data
+
+```{r, fig.height=8}
+TW <- annual(Tw)
+ds.tw <- DS(TW,eof.t2m)
+plot(ds.tw)
+```
+
 
 ## References
